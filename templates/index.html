@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Eye Gaze Communication</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(circle at top, #0f2027, #000);
+    color: #ffffff;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* HEADER */
+header {
+    padding: 20px 10px;
+}
+
+header h1 {
+    margin-bottom: 5px;
+    color: #00ffd5;
+}
+
+/* FULL SCREEN OPTIONS */
+.options-container {
+    flex: 1;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+
+/* OPTION CARD */
+.option {
+    width: 22vw;
+    height: 22vw;
+    max-width: 260px;
+    max-height: 260px;
+    min-width: 180px;
+    min-height: 180px;
+
+    background: #141414;
+    border-radius: 20px;
+    border: 3px solid transparent;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    transition: all 0.3s ease;
+}
+
+.option img {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 12px;
+}
+
+.option p {
+    font-size: 20px;
+    margin: 0;
+}
+
+/* ACTIVE OPTION */
+.option.active {
+    border-color: #00ffd5;
+    box-shadow: 0 0 30px #00ffd5;
+    transform: scale(1.1);
+}
+
+/* POPUP */
+.popup {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00ffd5;
+    color: #000;
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    animation: fadeInOut 1.6s ease forwards;
+    z-index: 999;
+}
+
+@keyframes fadeInOut {
+    0%   { opacity: 0; transform: translate(-50%, 10px); }
+    15%  { opacity: 1; transform: translate(-50%, 0); }
+    85%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Eye Gaze Communication System</h1>
+    <p>Move eyes left / right • Blink to select</p>
+</header>
+
+<div class="options-container">
+    <div class="option" data-name="Emergency">
+        <img src="{{ url_for('static', filename='images/emergency.png') }}" alt="Emergency icon">
+        <p>Emergency</p>
+    </div>
+
+    <div class="option" data-name="Light">
+        <img src="{{ url_for('static', filename='images/light.png') }}" alt="Light icon">
+        <p>Light</p>
+    </div>
+
+    <div class="option" data-name="Fan">
+        <img src="{{ url_for('static', filename='images/fan.png') }}" alt="Fan icon">
+        <p>Fan</p>
+    </div>
+
+    <div class="option" data-name="Water">
+        <img src="{{ url_for('static', filename='images/water.png') }}" alt="Water icon">
+        <p>Water</p>
+    </div>
+</div>
+<script>
+setInterval(() => {
+    fetch("/status")
+        .then(res => res.json())
+        .then(data => {
+            console.log("STATUS DATA:", data);
+        })
+        .catch(err => console.error("Fetch error:", err));
+}, 1000);
+</script>
+
+</body>
+</html>
