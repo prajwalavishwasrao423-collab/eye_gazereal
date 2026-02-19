@@ -17,7 +17,6 @@ body {
     flex-direction: column;
 }
 
-/* HEADER */
 header {
     padding: 20px 10px;
 }
@@ -27,7 +26,6 @@ header h1 {
     color: #00ffd5;
 }
 
-/* FULL SCREEN OPTIONS */
 .options-container {
     flex: 1;
     display: flex;
@@ -38,7 +36,6 @@ header h1 {
     box-sizing: border-box;
 }
 
-/* OPTION CARD */
 .option {
     width: 22vw;
     height: 22vw;
@@ -60,9 +57,9 @@ header h1 {
 }
 
 .option img {
-    width: 70px;
-    height: 70px;
-    margin-bottom: 12px;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
 }
 
 .option p {
@@ -70,14 +67,12 @@ header h1 {
     margin: 0;
 }
 
-/* ACTIVE OPTION */
 .option.active {
     border-color: #00ffd5;
     box-shadow: 0 0 30px #00ffd5;
     transform: scale(1.1);
 }
 
-/* POPUP */
 .popup {
     position: fixed;
     bottom: 40px;
@@ -89,8 +84,8 @@ header h1 {
     border-radius: 12px;
     font-size: 18px;
     font-weight: bold;
-    animation: fadeInOut 1.6s ease forwards;
     z-index: 999;
+    animation: fadeInOut 1.6s ease forwards;
 }
 
 @keyframes fadeInOut {
@@ -110,35 +105,76 @@ header h1 {
 </header>
 
 <div class="options-container">
-    <div class="option" data-name="Emergency">
-        <img src="{{ url_for('static', filename='images/emergency.png') }}" alt="Emergency icon">
-        <p>Emergency</p>
+
+    <!-- WATER (index 0) -->
+    <div class="option">
+        <img src="{{ url_for('static', filename='images/water.png') }}" alt="Water">
+        <p>Water</p>
     </div>
 
-    <div class="option" data-name="Light">
-        <img src="{{ url_for('static', filename='images/light.png') }}" alt="Light icon">
+    <!-- LIGHT (index 1) -->
+    <div class="option">
+        <img src="{{ url_for('static', filename='images/light.png') }}" alt="Light">
         <p>Light</p>
     </div>
 
-    <div class="option" data-name="Fan">
-        <img src="{{ url_for('static', filename='images/fan.png') }}" alt="Fan icon">
+    <!-- FAN (index 2) -->
+    <div class="option">
+        <img src="{{ url_for('static', filename='images/fan.png') }}" alt="Fan">
         <p>Fan</p>
     </div>
 
-    <div class="option" data-name="Water">
-        <img src="{{ url_for('static', filename='images/water.png') }}" alt="Water icon">
-        <p>Water</p>
+    <!-- EMERGENCY (index 3) -->
+    <div class="option">
+        <img src="{{ url_for('static', filename='images/emergency.png') }}" alt="Emergency">
+        <p>Emergency</p>
     </div>
+
 </div>
+
 <script>
-setInterval(() => {
-    fetch("/status")
-        .then(res => res.json())
-        .then(data => {
-            console.log("STATUS DATA:", data);
-        })
-        .catch(err => console.error("Fetch error:", err));
-}, 1000);
+
+const options = document.querySelectorAll(".option");
+
+function showPopup(text) {
+    const popup = document.createElement("div");
+    popup.className = "popup";
+    popup.innerText = text.toUpperCase() + " SELECTED ✅";
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+        popup.remove();
+    }, 1600);
+}
+
+async function getStatus() {
+    try {
+        const res = await fetch("/status");
+        const data = await res.json();
+
+        console.log("STATUS DATA:", data);
+
+        // Highlight active option
+        options.forEach((opt, i) => {
+            opt.classList.remove("active");
+            if (i === data.index) {
+                opt.classList.add("active");
+            }
+        });
+
+        // Show popup on blink
+        if (data.blink !== null) {
+            showPopup(data.blink);
+        }
+
+    } catch (err) {
+        console.error("Fetch error:", err);
+    }
+}
+
+// Poll every 300ms
+setInterval(getStatus, 300);
+
 </script>
 
 </body>

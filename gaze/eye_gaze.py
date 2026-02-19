@@ -9,7 +9,7 @@ face_mesh = mp_face.FaceMesh(refine_landmarks=True)
 cap = cv2.VideoCapture(0)
 
 last_blink_time = 0
-BLINK_COOLDOWN = 1.5
+BLINK_COOLDOWN = 0.5
 
 current_gaze = "CENTER"
 
